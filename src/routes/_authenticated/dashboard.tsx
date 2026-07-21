@@ -362,50 +362,7 @@ function Dashboard() {
               <h2>Knowledge Graph Visualization</h2>
               <span className="desc">Hover nodes for detail</span>
             </div>
-            <div className="kg-wrap">
-              <div className="kg-legend">
-                <div className="li"><span className="sw" style={{ background: "var(--steel-500)" }} />Equipment</div>
-                <div className="li"><span className="sw" style={{ background: "#6b7fa3" }} />Document</div>
-                <div className="li"><span className="sw" style={{ background: "var(--red)" }} />Failure</div>
-                <div className="li"><span className="sw" style={{ background: "var(--green)" }} />Procedure</div>
-              </div>
-              <svg ref={kgRef} viewBox="0 0 900 380" style={{ width: "100%", height: "auto", display: "block" }}>
-                {edges.map((e) => {
-                  const a = nodeById[e.source_id]; const b = nodeById[e.target_id];
-                  if (!a || !b) return null;
-                  return <line key={e.id} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#d3dbe6" strokeWidth={1.6} />;
-                })}
-                {pulseNode && (
-                  <circle cx={pulseNode.x} cy={pulseNode.y} r={pulseNode.r} fill="none" stroke={pulseNode.color} strokeWidth={2} opacity={0.5}>
-                    <animate attributeName="r" values={`${pulseNode.r};${pulseNode.r + 12};${pulseNode.r}`} dur="2.6s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.5;0;0.5" dur="2.6s" repeatCount="indefinite" />
-                  </circle>
-                )}
-                {nodes.map((n) => (
-                  <g key={n.id} className="kg-node"
-                    onMouseMove={(ev) => {
-                      const rect = kgRef.current?.getBoundingClientRect();
-                      if (!rect) return;
-                      setHover({ n, x: ev.clientX - rect.left + 14, y: ev.clientY - rect.top - 10 });
-                    }}
-                    onMouseLeave={() => setHover(null)}
-                  >
-                    <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} stroke="#fff" strokeWidth={2.5} />
-                    <text x={n.x} y={n.y + n.r + 15} textAnchor="middle" fontSize={11.5} fontWeight={600} fill="#152238">{n.label}</text>
-                  </g>
-                ))}
-                {nodes.length === 0 && (
-                  <text x="450" y="190" textAnchor="middle" fontSize={13} fill="#8ea0bc">
-                    Knowledge graph populates as you upload documents.
-                  </text>
-                )}
-              </svg>
-              {hover && (
-                <div className="kg-tooltip" style={{ left: hover.x, top: hover.y, opacity: 1 }}>
-                  <b>{hover.n.label}</b><br />{hover.n.detail}
-                </div>
-              )}
-            </div>
+            <KnowledgeGraph nodes={nodes} edges={edges} />
           </div>
 
           <div>
