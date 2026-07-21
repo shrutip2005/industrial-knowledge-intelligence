@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { authJson, authUpload } from "@/lib/api-client";
 import logoAsset from "@/assets/logo.png.asset.json";
+import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
