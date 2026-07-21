@@ -366,42 +366,65 @@ function Dashboard() {
           <div>
             <div className="section-title">
               <h2>Maintenance Intelligence & RCA</h2>
-              <span className="desc">Derived from work order & failure history</span>
+              <span className="desc">
+                Derived from work order & failure history
+                {isSampleWos && <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, background: "#eef3fb", color: "#3b7ec4", fontSize: 10, fontWeight: 700 }}>SAMPLE DATA</span>}
+              </span>
             </div>
             <div className="grid-3">
               <div className="panel mcard">
                 <div className="mtitle">⚠ Most Common Failure</div>
-                <div className="mvalue" style={{ textTransform: "capitalize" }}>{topFailure.name}</div>
+                <div className="mvalue" style={{ textTransform: "capitalize" }}>{showTopFailure.name}</div>
                 <div className="spark">
                   {failureSpark.map((h, i) => (<div key={i} style={{ height: `${h}%` }} className={h > 60 ? "hi" : ""} />))}
                 </div>
-                <div className="mnote">{topFailure.count} occurrences across work order history</div>
+                <div className="mnote">{showTopFailure.count} occurrences across work order history</div>
               </div>
               <div className="panel mcard">
                 <div className="mtitle">🔁 Work Orders Logged</div>
                 <div className="mvalue">
-                  {wos.length}
+                  {showWos.length}
                   <span style={{ fontSize: 14, color: "var(--ink-400)", fontWeight: 600 }}> total</span>
                 </div>
                 <div className="mnote">
-                  {wos.filter((w) => w.status === "closed").length} closed ·{" "}
-                  {wos.filter((w) => w.status !== "closed").length} open
+                  {showWos.filter((w) => w.status === "closed").length} closed ·{" "}
+                  {showWos.filter((w) => w.status !== "closed").length} open
                 </div>
                 <div className="mfoot">Track sign-off & recurring root causes</div>
               </div>
               <div className="panel mcard">
                 <div className="mtitle">🤖 RCA Agent</div>
-                <button className="upload-btn" style={{ marginTop: 8 }} onClick={runRca} disabled={rcaBusy || wos.length === 0}>
-                  {rcaBusy ? "Analyzing…" : `Run RCA on ${wos[0]?.equipment ?? "top asset"}`}
+                <button className="upload-btn" style={{ marginTop: 8 }} onClick={runRca} disabled={rcaBusy}>
+                  {rcaBusy ? "Analyzing…" : `Run RCA on ${showWos[0]?.equipment ?? "top asset"}`}
                 </button>
                 <div className="mnote">Fuses work orders, manual, inspection findings via AI.</div>
               </div>
             </div>
+
+            <div className="panel panel-pad" style={{ marginTop: 16 }}>
+              <div className="section-title">
+                <h2>Recent Work Orders</h2>
+                <span className="desc">{isSampleWos ? "Illustrative examples — upload your CMMS export to replace" : `${showWos.length} logged`}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {showWos.slice(0, 5).map((w) => (
+                  <div key={w.id} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 12px", borderRadius: 10, background: "#f7f9fc", border: "1px solid rgba(20,34,56,.06)" }}>
+                    <span className={`comp-tag ${w.status === "closed" ? "ok" : "missing"}`} style={{ minWidth: 68, textAlign: "center" }}>{w.status.toUpperCase()}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: "#152238" }}>{w.equipment} <span style={{ color: "var(--ink-400)", fontWeight: 500 }}>· {w.occurred_at}</span></div>
+                      <div style={{ fontSize: 12, color: "var(--ink-600)", marginTop: 2 }}>{w.description}</div>
+                      {w.root_cause && <div style={{ fontSize: 11, color: "var(--steel-500)", marginTop: 4, fontWeight: 600 }}>Root cause: {w.root_cause}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {rcaOut && (
               <div className="panel panel-pad" style={{ marginTop: 16 }}>
                 <div className="section-title">
                   <h2>RCA Agent Output</h2>
-                  <span className="desc">Grounded in {wos.length} work orders + document context</span>
+                  <span className="desc">Grounded in {showWos.length} work orders + document context</span>
                 </div>
                 <div className="rca-out">{rcaOut}</div>
               </div>
@@ -411,10 +434,12 @@ function Dashboard() {
           <div className="panel panel-pad">
             <div className="section-title">
               <h2>Compliance & Quality Check</h2>
-              <span className="desc">Required documentation status</span>
+              <span className="desc">
+                Required documentation status
+                {isSampleComp && <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, background: "#eef3fb", color: "#3b7ec4", fontSize: 10, fontWeight: 700 }}>SAMPLE DATA</span>}
+              </span>
             </div>
-            {comp.length === 0 && <div style={{ fontSize: 13, color: "var(--ink-400)" }}>No compliance items yet.</div>}
-            {comp.map((c) => (
+            {showComp.map((c) => (
               <div key={c.id} className="comp-row">
                 <div className={`comp-dot ${c.status}`} />
                 <div style={{ flex: 1 }}>
