@@ -79,8 +79,6 @@ function Dashboard() {
   const [rcaOut, setRcaOut] = useState("");
   const [rcaBusy, setRcaBusy] = useState(false);
 
-  const [hover, setHover] = useState<{ n: KgNode; x: number; y: number } | null>(null);
-  const kgRef = useRef<SVGSVGElement>(null);
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 3200); };
 
