@@ -77,24 +77,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Industrial Knowledge Intelligence Platform" },
+      { title: "Industrial Knowledge Intelligence — Unified Asset & Operations Brain" },
       {
         name: "description",
         content:
-          "AI-powered unified asset & operations brain — ingest engineering drawings, work orders, inspection reports, and safety procedures into a queryable knowledge graph with a RAG copilot, RCA agent, and compliance intelligence.",
+          "Ingest engineering manuals, work orders, inspection reports and safety procedures into a queryable AI brain. Ask questions, run RCA, monitor compliance — grounded in your documents.",
       },
-      { property: "og:title", content: "Industrial Knowledge Intelligence Platform" },
+      { property: "og:title", content: "Industrial Knowledge Intelligence — Unified Asset & Operations Brain" },
       {
         property: "og:description",
         content:
-          "Unified AI brain for engineers, technicians and plant managers — RAG copilot, knowledge graph, predictive maintenance, compliance.",
+          "Ingest engineering manuals, work orders, inspection reports and safety procedures into a queryable AI brain. Ask questions, run RCA, monitor compliance — grounded in your documents.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Industrial Knowledge Intelligence — Unified Asset & Operations Brain" },
+      { name: "twitter:description", content: "Ingest engineering manuals, work orders, inspection reports and safety procedures into a queryable AI brain. Ask questions, run RCA, monitor compliance — grounded in your documents." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/45a2ee0c-e99e-4196-9132-6bb3a60056eb/id-preview-6411e671--4f9392e5-27d5-49fb-ba1f-ef991511a087.lovable.app-1784658435486.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/45a2ee0c-e99e-4196-9132-6bb3a60056eb/id-preview-6411e671--4f9392e5-27d5-49fb-ba1f-ef991511a087.lovable.app-1784658435486.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

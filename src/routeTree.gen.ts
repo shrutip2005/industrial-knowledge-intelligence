@@ -9,67 +9,42 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiRcaRouteImport } from './routes/api/rca'
-import { Route as ApiMaintenanceRouteImport } from './routes/api/maintenance'
-import { Route as ApiLessonsRouteImport } from './routes/api/lessons'
-import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge-graph'
-import { Route as ApiEntitiesRouteImport } from './routes/api/entities'
-import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
-import { Route as ApiComplianceGapRouteImport } from './routes/api/compliance-gap'
-import { Route as ApiComplianceRouteImport } from './routes/api/compliance'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiComplianceRouteImport } from './routes/api/compliance'
+import { Route as ApiComplianceGapRouteImport } from './routes/api/compliance-gap'
+import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
+import { Route as ApiEntitiesRouteImport } from './routes/api/entities'
+import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge-graph'
+import { Route as ApiLessonsRouteImport } from './routes/api/lessons'
+import { Route as ApiMaintenanceRouteImport } from './routes/api/maintenance'
+import { Route as ApiRcaRouteImport } from './routes/api/rca'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRcaRoute = ApiRcaRouteImport.update({
-  id: '/api/rca',
-  path: '/api/rca',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiMaintenanceRoute = ApiMaintenanceRouteImport.update({
-  id: '/api/maintenance',
-  path: '/api/maintenance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLessonsRoute = ApiLessonsRouteImport.update({
-  id: '/api/lessons',
-  path: '/api/lessons',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiKnowledgeGraphRoute = ApiKnowledgeGraphRouteImport.update({
-  id: '/api/knowledge-graph',
-  path: '/api/knowledge-graph',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiEntitiesRoute = ApiEntitiesRouteImport.update({
-  id: '/api/entities',
-  path: '/api/entities',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
-  id: '/api/documents',
-  path: '/api/documents',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiComplianceGapRoute = ApiComplianceGapRouteImport.update({
-  id: '/api/compliance-gap',
-  path: '/api/compliance-gap',
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiComplianceRoute = ApiComplianceRouteImport.update({
@@ -77,15 +52,40 @@ const ApiComplianceRoute = ApiComplianceRouteImport.update({
   path: '/api/compliance',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
+const ApiComplianceGapRoute = ApiComplianceGapRouteImport.update({
+  id: '/api/compliance-gap',
+  path: '/api/compliance-gap',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
+  id: '/api/documents',
+  path: '/api/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEntitiesRoute = ApiEntitiesRouteImport.update({
+  id: '/api/entities',
+  path: '/api/entities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKnowledgeGraphRoute = ApiKnowledgeGraphRouteImport.update({
+  id: '/api/knowledge-graph',
+  path: '/api/knowledge-graph',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLessonsRoute = ApiLessonsRouteImport.update({
+  id: '/api/lessons',
+  path: '/api/lessons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMaintenanceRoute = ApiMaintenanceRouteImport.update({
+  id: '/api/maintenance',
+  path: '/api/maintenance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRcaRoute = ApiRcaRouteImport.update({
+  id: '/api/rca',
+  path: '/api/rca',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -195,11 +195,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -209,60 +209,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/rca': {
-      id: '/api/rca'
-      path: '/api/rca'
-      fullPath: '/api/rca'
-      preLoaderRoute: typeof ApiRcaRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/maintenance': {
-      id: '/api/maintenance'
-      path: '/api/maintenance'
-      fullPath: '/api/maintenance'
-      preLoaderRoute: typeof ApiMaintenanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/lessons': {
-      id: '/api/lessons'
-      path: '/api/lessons'
-      fullPath: '/api/lessons'
-      preLoaderRoute: typeof ApiLessonsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/knowledge-graph': {
-      id: '/api/knowledge-graph'
-      path: '/api/knowledge-graph'
-      fullPath: '/api/knowledge-graph'
-      preLoaderRoute: typeof ApiKnowledgeGraphRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/entities': {
-      id: '/api/entities'
-      path: '/api/entities'
-      fullPath: '/api/entities'
-      preLoaderRoute: typeof ApiEntitiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/documents': {
-      id: '/api/documents'
-      path: '/api/documents'
-      fullPath: '/api/documents'
-      preLoaderRoute: typeof ApiDocumentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/compliance-gap': {
-      id: '/api/compliance-gap'
-      path: '/api/compliance-gap'
-      fullPath: '/api/compliance-gap'
-      preLoaderRoute: typeof ApiComplianceGapRouteImport
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/compliance': {
@@ -272,19 +237,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiComplianceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
+    '/api/compliance-gap': {
+      id: '/api/compliance-gap'
+      path: '/api/compliance-gap'
+      fullPath: '/api/compliance-gap'
+      preLoaderRoute: typeof ApiComplianceGapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/api/documents': {
+      id: '/api/documents'
+      path: '/api/documents'
+      fullPath: '/api/documents'
+      preLoaderRoute: typeof ApiDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/entities': {
+      id: '/api/entities'
+      path: '/api/entities'
+      fullPath: '/api/entities'
+      preLoaderRoute: typeof ApiEntitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/knowledge-graph': {
+      id: '/api/knowledge-graph'
+      path: '/api/knowledge-graph'
+      fullPath: '/api/knowledge-graph'
+      preLoaderRoute: typeof ApiKnowledgeGraphRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lessons': {
+      id: '/api/lessons'
+      path: '/api/lessons'
+      fullPath: '/api/lessons'
+      preLoaderRoute: typeof ApiLessonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/maintenance': {
+      id: '/api/maintenance'
+      path: '/api/maintenance'
+      fullPath: '/api/maintenance'
+      preLoaderRoute: typeof ApiMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rca': {
+      id: '/api/rca'
+      path: '/api/rca'
+      fullPath: '/api/rca'
+      preLoaderRoute: typeof ApiRcaRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

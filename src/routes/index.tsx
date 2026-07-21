@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Industrial Knowledge Intelligence — Unified Asset & Operations Brain" },
       {
         property: "og:description",
-        content: "RAG copilot, knowledge graph, predictive maintenance and compliance intelligence for plant operations.",
+        content: "Ingest engineering manuals, work orders, inspection reports and safety procedures into a queryable AI brain. Ask questions, run RCA, monitor compliance — grounded in your documents.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
