@@ -14,9 +14,11 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiRcaRouteImport } from './routes/api/rca'
 import { Route as ApiMaintenanceRouteImport } from './routes/api/maintenance'
+import { Route as ApiLessonsRouteImport } from './routes/api/lessons'
 import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge-graph'
 import { Route as ApiEntitiesRouteImport } from './routes/api/entities'
 import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
+import { Route as ApiComplianceGapRouteImport } from './routes/api/compliance-gap'
 import { Route as ApiComplianceRouteImport } from './routes/api/compliance'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -45,6 +47,11 @@ const ApiMaintenanceRoute = ApiMaintenanceRouteImport.update({
   path: '/api/maintenance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLessonsRoute = ApiLessonsRouteImport.update({
+  id: '/api/lessons',
+  path: '/api/lessons',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiKnowledgeGraphRoute = ApiKnowledgeGraphRouteImport.update({
   id: '/api/knowledge-graph',
   path: '/api/knowledge-graph',
@@ -58,6 +65,11 @@ const ApiEntitiesRoute = ApiEntitiesRouteImport.update({
 const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
   id: '/api/documents',
   path: '/api/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiComplianceGapRoute = ApiComplianceGapRouteImport.update({
+  id: '/api/compliance-gap',
+  path: '/api/compliance-gap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiComplianceRoute = ApiComplianceRouteImport.update({
@@ -82,9 +94,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/chat': typeof ApiChatRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/compliance-gap': typeof ApiComplianceGapRoute
   '/api/documents': typeof ApiDocumentsRoute
   '/api/entities': typeof ApiEntitiesRoute
   '/api/knowledge-graph': typeof ApiKnowledgeGraphRoute
+  '/api/lessons': typeof ApiLessonsRoute
   '/api/maintenance': typeof ApiMaintenanceRoute
   '/api/rca': typeof ApiRcaRoute
 }
@@ -94,9 +108,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/chat': typeof ApiChatRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/compliance-gap': typeof ApiComplianceGapRoute
   '/api/documents': typeof ApiDocumentsRoute
   '/api/entities': typeof ApiEntitiesRoute
   '/api/knowledge-graph': typeof ApiKnowledgeGraphRoute
+  '/api/lessons': typeof ApiLessonsRoute
   '/api/maintenance': typeof ApiMaintenanceRoute
   '/api/rca': typeof ApiRcaRoute
 }
@@ -108,9 +124,11 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/chat': typeof ApiChatRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/compliance-gap': typeof ApiComplianceGapRoute
   '/api/documents': typeof ApiDocumentsRoute
   '/api/entities': typeof ApiEntitiesRoute
   '/api/knowledge-graph': typeof ApiKnowledgeGraphRoute
+  '/api/lessons': typeof ApiLessonsRoute
   '/api/maintenance': typeof ApiMaintenanceRoute
   '/api/rca': typeof ApiRcaRoute
 }
@@ -122,9 +140,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/chat'
     | '/api/compliance'
+    | '/api/compliance-gap'
     | '/api/documents'
     | '/api/entities'
     | '/api/knowledge-graph'
+    | '/api/lessons'
     | '/api/maintenance'
     | '/api/rca'
   fileRoutesByTo: FileRoutesByTo
@@ -134,9 +154,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/api/chat'
     | '/api/compliance'
+    | '/api/compliance-gap'
     | '/api/documents'
     | '/api/entities'
     | '/api/knowledge-graph'
+    | '/api/lessons'
     | '/api/maintenance'
     | '/api/rca'
   id:
@@ -147,9 +169,11 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/api/chat'
     | '/api/compliance'
+    | '/api/compliance-gap'
     | '/api/documents'
     | '/api/entities'
     | '/api/knowledge-graph'
+    | '/api/lessons'
     | '/api/maintenance'
     | '/api/rca'
   fileRoutesById: FileRoutesById
@@ -160,9 +184,11 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiComplianceRoute: typeof ApiComplianceRoute
+  ApiComplianceGapRoute: typeof ApiComplianceGapRoute
   ApiDocumentsRoute: typeof ApiDocumentsRoute
   ApiEntitiesRoute: typeof ApiEntitiesRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
+  ApiLessonsRoute: typeof ApiLessonsRoute
   ApiMaintenanceRoute: typeof ApiMaintenanceRoute
   ApiRcaRoute: typeof ApiRcaRoute
 }
@@ -204,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/lessons': {
+      id: '/api/lessons'
+      path: '/api/lessons'
+      fullPath: '/api/lessons'
+      preLoaderRoute: typeof ApiLessonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/knowledge-graph': {
       id: '/api/knowledge-graph'
       path: '/api/knowledge-graph'
@@ -223,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/api/documents'
       fullPath: '/api/documents'
       preLoaderRoute: typeof ApiDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/compliance-gap': {
+      id: '/api/compliance-gap'
+      path: '/api/compliance-gap'
+      fullPath: '/api/compliance-gap'
+      preLoaderRoute: typeof ApiComplianceGapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/compliance': {
@@ -266,9 +306,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
   ApiComplianceRoute: ApiComplianceRoute,
+  ApiComplianceGapRoute: ApiComplianceGapRoute,
   ApiDocumentsRoute: ApiDocumentsRoute,
   ApiEntitiesRoute: ApiEntitiesRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
+  ApiLessonsRoute: ApiLessonsRoute,
   ApiMaintenanceRoute: ApiMaintenanceRoute,
   ApiRcaRoute: ApiRcaRoute,
 }

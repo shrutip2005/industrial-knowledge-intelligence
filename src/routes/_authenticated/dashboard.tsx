@@ -78,6 +78,35 @@ function Dashboard() {
 
   const [rcaOut, setRcaOut] = useState("");
   const [rcaBusy, setRcaBusy] = useState(false);
+  const [lessonsOut, setLessonsOut] = useState("");
+  const [lessonsBusy, setLessonsBusy] = useState(false);
+  const [gap, setGap] = useState<null | {
+    summary: { total: number; ok: number; partial: number; missing: number };
+    results: { id: string; regulation: string; title: string; status: "ok" | "partial" | "missing"; rationale: string; evidence: { doc: string; page: number; snippet: string }[] }[];
+    doc_count: number;
+  }>(null);
+  const [gapBusy, setGapBusy] = useState(false);
+
+  const runLessons = async () => {
+    setLessonsBusy(true);
+    setLessonsOut("Analyzing incidents, work orders and document context…");
+    try {
+      const r = await authJson<{ analysis: string }>("/api/lessons", { method: "POST", body: "{}" });
+      setLessonsOut(r.analysis);
+    } catch (err) {
+      setLessonsOut("Lessons Learned failed: " + (err instanceof Error ? err.message : String(err)));
+    } finally { setLessonsBusy(false); }
+  };
+
+  const runGap = async () => {
+    setGapBusy(true);
+    try {
+      const r = await authJson<typeof gap>("/api/compliance-gap", { method: "POST", body: "{}" });
+      setGap(r);
+    } catch (err) {
+      showToast("Gap scan failed: " + (err instanceof Error ? err.message : String(err)));
+    } finally { setGapBusy(false); }
+  };
 
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 3200); };
@@ -454,6 +483,63 @@ function Dashboard() {
               </div>
             ))}
           </div>
+
+          <div className="panel panel-pad">
+            <div className="section-title">
+              <h2>Compliance Gap Detection</h2>
+              <span className="desc">Cross-checks your uploads against an India-relevant regulation checklist</span>
+            </div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
+              <button className="upload-btn" onClick={runGap} disabled={gapBusy} style={{ width: "auto", padding: "10px 14px" }}>
+                {gapBusy ? "Scanning…" : "Run Gap Scan"}
+              </button>
+              {gap && (
+                <div style={{ fontSize: 12, color: "var(--ink-600)" }}>
+                  <b>{gap.summary.ok}</b> covered · <b>{gap.summary.partial}</b> partial · <b style={{ color: "var(--red)" }}>{gap.summary.missing}</b> missing · across {gap.summary.total} requirements ({gap.doc_count} docs indexed)
+                </div>
+              )}
+            </div>
+            {!gap && !gapBusy && (
+              <div style={{ fontSize: 13, color: "var(--ink-400)" }}>
+                Runs semantic search + LLM verification against each requirement (Factory Act, OISD-116, PESO, CPCB, MSIHC, ISO 9001, IS 15656). Upload your certificates and reports first for meaningful results.
+              </div>
+            )}
+            {gap && gap.results.map((r) => (
+              <div key={r.id} className="comp-row">
+                <div className={`comp-dot ${r.status === "ok" ? "ok" : r.status === "partial" ? "missing" : "critical"}`} />
+                <div style={{ flex: 1 }}>
+                  <div className="comp-title">{r.title}</div>
+                  <div className="comp-desc">
+                    {r.rationale} <span style={{ color: "var(--steel-500)", fontWeight: 600 }}>· {r.regulation}</span>
+                  </div>
+                  {r.evidence.length > 0 && (
+                    <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4 }}>
+                      {r.evidence.map((ev, i) => (
+                        <div key={i} style={{ fontSize: 11, color: "#4a5872", background: "#f7f9fc", padding: "4px 8px", borderRadius: 6 }}>
+                          📄 {ev.doc} <span style={{ color: "var(--steel-500)" }}>p.{ev.page}</span> — {ev.snippet}…
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className={`comp-tag ${r.status === "ok" ? "ok" : r.status === "partial" ? "missing" : "critical"}`}>
+                  {r.status === "ok" ? "COVERED" : r.status === "partial" ? "PARTIAL" : "MISSING"}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="panel panel-pad">
+            <div className="section-title">
+              <h2>Lessons Learned & Failure Intelligence</h2>
+              <span className="desc">Systemic patterns across incidents, work orders and documents</span>
+            </div>
+            <button className="upload-btn" onClick={runLessons} disabled={lessonsBusy} style={{ width: "auto", padding: "10px 14px" }}>
+              {lessonsBusy ? "Analyzing…" : "Run Lessons Learned Agent"}
+            </button>
+            {lessonsOut && <div className="rca-out" style={{ marginTop: 14 }}>{lessonsOut}</div>}
+          </div>
+
 
           <div className="panel">
             <div className="panel-pad" style={{ paddingBottom: 0 }}>
