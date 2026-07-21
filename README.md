@@ -1,4 +1,4 @@
-# Industrial Knowledge Intelligence Platform
+# PS_08 - Industrial Knowledge Intelligence Platform
 
 **AI for Industrial Knowledge Intelligence: Unified Asset & Operations Brain**
 
