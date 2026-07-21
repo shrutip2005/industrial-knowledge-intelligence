@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { authJson, authUpload } from "@/lib/api-client";
 import logoAsset from "@/assets/logo.png.asset.json";
+import { KnowledgeGraph } from "@/components/KnowledgeGraph";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -78,8 +79,6 @@ function Dashboard() {
   const [rcaOut, setRcaOut] = useState("");
   const [rcaBusy, setRcaBusy] = useState(false);
 
-  const [hover, setHover] = useState<{ n: KgNode; x: number; y: number } | null>(null);
-  const kgRef = useRef<SVGSVGElement>(null);
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 3200); };
 
@@ -177,9 +176,26 @@ function Dashboard() {
     }
   };
 
-  const nodeById = useMemo(() => Object.fromEntries(nodes.map((n) => [n.id, n])), [nodes]);
-  const pulseNode = nodes.find((n) => n.id === "p101");
   const failureSpark = [30, 50, 35, 70, 45, 90];
+
+  // Sample fallbacks so panels aren't dead before the user uploads real ops data.
+  const sampleWos: WorkOrder[] = [
+    { id: "s1", equipment: "Pump P-101", description: "Seal leak on discharge side; vibration above threshold.", reported_by: "Sample", root_cause: "Mechanical seal wear", status: "closed", occurred_at: "2025-06-12" },
+    { id: "s2", equipment: "Compressor C-204", description: "High bearing temperature alarm during load ramp.", reported_by: "Sample", root_cause: "Lube oil contamination", status: "open",   occurred_at: "2025-07-03" },
+    { id: "s3", equipment: "Heat Exchanger E-310", description: "Approach temperature drift; suspected fouling.", reported_by: "Sample", root_cause: "Tube-side fouling", status: "closed", occurred_at: "2025-07-18" },
+    { id: "s4", equipment: "Pump P-101", description: "Cavitation noise; NPSH margin low.", reported_by: "Sample", root_cause: "Suction strainer blockage", status: "open", occurred_at: "2025-07-21" },
+  ];
+  const sampleComp: CompItem[] = [
+    { id: "c1", title: "Pressure Vessel Inspection Certificate", description: "Annual statutory inspection under Factory Act.", regulation: "Factory Act · Rule 61", status: "missing" },
+    { id: "c2", title: "OISD-116 Fire Safety Audit", description: "Hydrocarbon storage & handling compliance evidence.", regulation: "OISD-116", status: "critical" },
+    { id: "c3", title: "Operator Competency Records", description: "Sign-off log for licensed control room operators.", regulation: "PESO", status: "ok" },
+    { id: "c4", title: "Environmental Emissions Report", description: "Quarterly stack emissions and effluent monitoring.", regulation: "CPCB", status: "missing" },
+  ];
+  const showWos  = wos.length  ? wos  : sampleWos;
+  const showComp = comp.length ? comp : sampleComp;
+  const showTopFailure = wos.length ? topFailure : { name: "Mechanical seal wear", count: 3 };
+  const isSampleWos  = wos.length === 0;
+  const isSampleComp = comp.length === 0;
 
   return (
     <div className="app-shell">
@@ -344,91 +360,71 @@ function Dashboard() {
               <h2>Knowledge Graph Visualization</h2>
               <span className="desc">Hover nodes for detail</span>
             </div>
-            <div className="kg-wrap">
-              <div className="kg-legend">
-                <div className="li"><span className="sw" style={{ background: "var(--steel-500)" }} />Equipment</div>
-                <div className="li"><span className="sw" style={{ background: "#6b7fa3" }} />Document</div>
-                <div className="li"><span className="sw" style={{ background: "var(--red)" }} />Failure</div>
-                <div className="li"><span className="sw" style={{ background: "var(--green)" }} />Procedure</div>
-              </div>
-              <svg ref={kgRef} viewBox="0 0 900 380" style={{ width: "100%", height: "auto", display: "block" }}>
-                {edges.map((e) => {
-                  const a = nodeById[e.source_id]; const b = nodeById[e.target_id];
-                  if (!a || !b) return null;
-                  return <line key={e.id} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#d3dbe6" strokeWidth={1.6} />;
-                })}
-                {pulseNode && (
-                  <circle cx={pulseNode.x} cy={pulseNode.y} r={pulseNode.r} fill="none" stroke={pulseNode.color} strokeWidth={2} opacity={0.5}>
-                    <animate attributeName="r" values={`${pulseNode.r};${pulseNode.r + 12};${pulseNode.r}`} dur="2.6s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.5;0;0.5" dur="2.6s" repeatCount="indefinite" />
-                  </circle>
-                )}
-                {nodes.map((n) => (
-                  <g key={n.id} className="kg-node"
-                    onMouseMove={(ev) => {
-                      const rect = kgRef.current?.getBoundingClientRect();
-                      if (!rect) return;
-                      setHover({ n, x: ev.clientX - rect.left + 14, y: ev.clientY - rect.top - 10 });
-                    }}
-                    onMouseLeave={() => setHover(null)}
-                  >
-                    <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} stroke="#fff" strokeWidth={2.5} />
-                    <text x={n.x} y={n.y + n.r + 15} textAnchor="middle" fontSize={11.5} fontWeight={600} fill="#152238">{n.label}</text>
-                  </g>
-                ))}
-                {nodes.length === 0 && (
-                  <text x="450" y="190" textAnchor="middle" fontSize={13} fill="#8ea0bc">
-                    Knowledge graph populates as you upload documents.
-                  </text>
-                )}
-              </svg>
-              {hover && (
-                <div className="kg-tooltip" style={{ left: hover.x, top: hover.y, opacity: 1 }}>
-                  <b>{hover.n.label}</b><br />{hover.n.detail}
-                </div>
-              )}
-            </div>
+            <KnowledgeGraph nodes={nodes} edges={edges} />
           </div>
 
           <div>
             <div className="section-title">
               <h2>Maintenance Intelligence & RCA</h2>
-              <span className="desc">Derived from work order & failure history</span>
+              <span className="desc">
+                Derived from work order & failure history
+                {isSampleWos && <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, background: "#eef3fb", color: "#3b7ec4", fontSize: 10, fontWeight: 700 }}>SAMPLE DATA</span>}
+              </span>
             </div>
             <div className="grid-3">
               <div className="panel mcard">
                 <div className="mtitle">⚠ Most Common Failure</div>
-                <div className="mvalue" style={{ textTransform: "capitalize" }}>{topFailure.name}</div>
+                <div className="mvalue" style={{ textTransform: "capitalize" }}>{showTopFailure.name}</div>
                 <div className="spark">
                   {failureSpark.map((h, i) => (<div key={i} style={{ height: `${h}%` }} className={h > 60 ? "hi" : ""} />))}
                 </div>
-                <div className="mnote">{topFailure.count} occurrences across work order history</div>
+                <div className="mnote">{showTopFailure.count} occurrences across work order history</div>
               </div>
               <div className="panel mcard">
                 <div className="mtitle">🔁 Work Orders Logged</div>
                 <div className="mvalue">
-                  {wos.length}
+                  {showWos.length}
                   <span style={{ fontSize: 14, color: "var(--ink-400)", fontWeight: 600 }}> total</span>
                 </div>
                 <div className="mnote">
-                  {wos.filter((w) => w.status === "closed").length} closed ·{" "}
-                  {wos.filter((w) => w.status !== "closed").length} open
+                  {showWos.filter((w) => w.status === "closed").length} closed ·{" "}
+                  {showWos.filter((w) => w.status !== "closed").length} open
                 </div>
                 <div className="mfoot">Track sign-off & recurring root causes</div>
               </div>
               <div className="panel mcard">
                 <div className="mtitle">🤖 RCA Agent</div>
-                <button className="upload-btn" style={{ marginTop: 8 }} onClick={runRca} disabled={rcaBusy || wos.length === 0}>
-                  {rcaBusy ? "Analyzing…" : `Run RCA on ${wos[0]?.equipment ?? "top asset"}`}
+                <button className="upload-btn" style={{ marginTop: 8 }} onClick={runRca} disabled={rcaBusy}>
+                  {rcaBusy ? "Analyzing…" : `Run RCA on ${showWos[0]?.equipment ?? "top asset"}`}
                 </button>
                 <div className="mnote">Fuses work orders, manual, inspection findings via AI.</div>
               </div>
             </div>
+
+            <div className="panel panel-pad" style={{ marginTop: 16 }}>
+              <div className="section-title">
+                <h2>Recent Work Orders</h2>
+                <span className="desc">{isSampleWos ? "Illustrative examples — upload your CMMS export to replace" : `${showWos.length} logged`}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {showWos.slice(0, 5).map((w) => (
+                  <div key={w.id} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 12px", borderRadius: 10, background: "#f7f9fc", border: "1px solid rgba(20,34,56,.06)" }}>
+                    <span className={`comp-tag ${w.status === "closed" ? "ok" : "missing"}`} style={{ minWidth: 68, textAlign: "center" }}>{w.status.toUpperCase()}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: "#152238" }}>{w.equipment} <span style={{ color: "var(--ink-400)", fontWeight: 500 }}>· {w.occurred_at}</span></div>
+                      <div style={{ fontSize: 12, color: "var(--ink-600)", marginTop: 2 }}>{w.description}</div>
+                      {w.root_cause && <div style={{ fontSize: 11, color: "var(--steel-500)", marginTop: 4, fontWeight: 600 }}>Root cause: {w.root_cause}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {rcaOut && (
               <div className="panel panel-pad" style={{ marginTop: 16 }}>
                 <div className="section-title">
                   <h2>RCA Agent Output</h2>
-                  <span className="desc">Grounded in {wos.length} work orders + document context</span>
+                  <span className="desc">Grounded in {showWos.length} work orders + document context</span>
                 </div>
                 <div className="rca-out">{rcaOut}</div>
               </div>
@@ -438,10 +434,12 @@ function Dashboard() {
           <div className="panel panel-pad">
             <div className="section-title">
               <h2>Compliance & Quality Check</h2>
-              <span className="desc">Required documentation status</span>
+              <span className="desc">
+                Required documentation status
+                {isSampleComp && <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, background: "#eef3fb", color: "#3b7ec4", fontSize: 10, fontWeight: 700 }}>SAMPLE DATA</span>}
+              </span>
             </div>
-            {comp.length === 0 && <div style={{ fontSize: 13, color: "var(--ink-400)" }}>No compliance items yet.</div>}
-            {comp.map((c) => (
+            {showComp.map((c) => (
               <div key={c.id} className="comp-row">
                 <div className={`comp-dot ${c.status}`} />
                 <div style={{ flex: 1 }}>
