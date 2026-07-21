@@ -78,6 +78,35 @@ function Dashboard() {
 
   const [rcaOut, setRcaOut] = useState("");
   const [rcaBusy, setRcaBusy] = useState(false);
+  const [lessonsOut, setLessonsOut] = useState("");
+  const [lessonsBusy, setLessonsBusy] = useState(false);
+  const [gap, setGap] = useState<null | {
+    summary: { total: number; ok: number; partial: number; missing: number };
+    results: { id: string; regulation: string; title: string; status: "ok" | "partial" | "missing"; rationale: string; evidence: { doc: string; page: number; snippet: string }[] }[];
+    doc_count: number;
+  }>(null);
+  const [gapBusy, setGapBusy] = useState(false);
+
+  const runLessons = async () => {
+    setLessonsBusy(true);
+    setLessonsOut("Analyzing incidents, work orders and document context…");
+    try {
+      const r = await authJson<{ analysis: string }>("/api/lessons", { method: "POST", body: "{}" });
+      setLessonsOut(r.analysis);
+    } catch (err) {
+      setLessonsOut("Lessons Learned failed: " + (err instanceof Error ? err.message : String(err)));
+    } finally { setLessonsBusy(false); }
+  };
+
+  const runGap = async () => {
+    setGapBusy(true);
+    try {
+      const r = await authJson<typeof gap>("/api/compliance-gap", { method: "POST", body: "{}" });
+      setGap(r);
+    } catch (err) {
+      showToast("Gap scan failed: " + (err instanceof Error ? err.message : String(err)));
+    } finally { setGapBusy(false); }
+  };
 
 
   const showToast = (m: string) => { setToast(m); setTimeout(() => setToast(""), 3200); };
