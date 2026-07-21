@@ -178,9 +178,26 @@ function Dashboard() {
     }
   };
 
-  const nodeById = useMemo(() => Object.fromEntries(nodes.map((n) => [n.id, n])), [nodes]);
-  const pulseNode = nodes.find((n) => n.id === "p101");
   const failureSpark = [30, 50, 35, 70, 45, 90];
+
+  // Sample fallbacks so panels aren't dead before the user uploads real ops data.
+  const sampleWos: WorkOrder[] = [
+    { id: "s1", equipment: "Pump P-101", description: "Seal leak on discharge side; vibration above threshold.", reported_by: "Sample", root_cause: "Mechanical seal wear", status: "closed", occurred_at: "2025-06-12" },
+    { id: "s2", equipment: "Compressor C-204", description: "High bearing temperature alarm during load ramp.", reported_by: "Sample", root_cause: "Lube oil contamination", status: "open",   occurred_at: "2025-07-03" },
+    { id: "s3", equipment: "Heat Exchanger E-310", description: "Approach temperature drift; suspected fouling.", reported_by: "Sample", root_cause: "Tube-side fouling", status: "closed", occurred_at: "2025-07-18" },
+    { id: "s4", equipment: "Pump P-101", description: "Cavitation noise; NPSH margin low.", reported_by: "Sample", root_cause: "Suction strainer blockage", status: "open", occurred_at: "2025-07-21" },
+  ];
+  const sampleComp: CompItem[] = [
+    { id: "c1", title: "Pressure Vessel Inspection Certificate", description: "Annual statutory inspection under Factory Act.", regulation: "Factory Act · Rule 61", status: "missing" },
+    { id: "c2", title: "OISD-116 Fire Safety Audit", description: "Hydrocarbon storage & handling compliance evidence.", regulation: "OISD-116", status: "critical" },
+    { id: "c3", title: "Operator Competency Records", description: "Sign-off log for licensed control room operators.", regulation: "PESO", status: "ok" },
+    { id: "c4", title: "Environmental Emissions Report", description: "Quarterly stack emissions and effluent monitoring.", regulation: "CPCB", status: "missing" },
+  ];
+  const showWos  = wos.length  ? wos  : sampleWos;
+  const showComp = comp.length ? comp : sampleComp;
+  const showTopFailure = wos.length ? topFailure : { name: "Mechanical seal wear", count: 3 };
+  const isSampleWos  = wos.length === 0;
+  const isSampleComp = comp.length === 0;
 
   return (
     <div className="app-shell">
