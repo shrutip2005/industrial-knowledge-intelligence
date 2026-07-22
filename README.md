@@ -1,5 +1,5 @@
 # PS_08 - Industrial Knowledge Intelligence Platform
-
+# by mansi
 **AI for Industrial Knowledge Intelligence: Unified Asset & Operations Brain**
 
 A working prototype for the "Industrial Intelligence / Document Management / Knowledge Engineering / Quality" challenge. It ingests heterogeneous plant documents — PDFs, manuals, work orders, inspection reports, safety procedures — and turns them into a queryable, actionable, continuously-updated knowledge layer that engineers, technicians and plant managers can use at the point of need.
